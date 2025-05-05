@@ -1,0 +1,43 @@
+{% extends "recipes/base.html" %}
+<!-- -->
+{% block content %}
+<h1>Recipe # {{object.id}}</h1>
+<div class="card my-4">
+  <div class="card-body">
+    <h5 class="card-title">{{ object.title }}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">{{ object.author }}</h6>
+    <p class="card-text">{{ object.description }}</p>
+    <h6 class="card-subtitle mb-2 text-muted">
+      {{ object.updated_at|date:"F d, Y" }}
+    </h6>
+  </div>
+</div>
+<div class="rating-section">
+  <h4>Rate this recipe</h4>
+  
+  {% if user_rating %}
+      <p>Your rating: {{ user_rating }} ★</p>
+  {% endif %}
+  
+  <form method="post">
+      {% csrf_token %}
+      <div class="star-rating">
+          {% for i in "54321" %}
+              <input type="radio" id="star{{ i }}" name="stars" value="{{ i }}"
+                     {% if user_rating == i|add:0 %}checked{% endif %}>
+              <label for="star{{ i }}">★</label>
+          {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Rating</button>
+  </form>
+  
+  <p>Average: {{ recipe.average_rating|floatformat:1 }} ★ ({{ recipe.rating_count }} ratings)</p>
+</div>
+{% if object.author == user or user.is_staff %}
+<div class="col-4">
+    <a class="btn btn-outline-info" href="{% url 'recipes-update' object.id %}">Update</a>
+    <a class="btn btn-outline-danger" href="{% url 'recipes-delete' object.id %}">Delete</a>
+</div>
+{% endif %}
+<!-- -->
+{% endblock content %}

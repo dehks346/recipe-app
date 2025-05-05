@@ -1,0 +1,58 @@
+{% load static %}  <!-- This must be the FIRST line in your template -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nosh | Recipes</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');</style>
+  </head>
+  <body>
+    <nav>
+      <a class="nav-title" href="{% url 'recipes-home' %}">
+        <h4>NOSH</h4>
+        <p>RECIPES | FOOD</p>
+      </a>
+      <div class="nav-right">
+        <ul>
+          <li><a aria-current="page" href="{% url 'recipes-home' %}">Feed</a></li>
+          <li><a href="{% url 'recipes-create' %}">Post Recipe</a></li>
+          <li>
+            <form action="{% url 'search_results' %}" method="get">
+              <label for="search" class="visually-hidden">Search</label>
+              <input id="search" name="q" type="text" placeholder="Search..." class="nav-search">
+            </form>
+          </li>
+          {% if user.is_authenticated %}
+          <li><a href="/profile/{{ user.username }}">{{ user.username }}</a></li>
+            <li>
+              <form action="{% url 'user-logout' %}" method="post">
+                {% csrf_token %}
+                <button class="nav-button" type="submit">Logout</button>
+              </form>
+            </li>
+          {% else %}
+            <li>
+              <form action="{% url 'user-login' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Login</button>
+              </form>
+            </li>
+            <li>
+              <form action="{% url 'user-register' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Register</button>
+              </form>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      {% if messages %} {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% block content %} {% endblock %}
+    </div>
+  </body>
+</html>

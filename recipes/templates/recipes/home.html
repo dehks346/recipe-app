@@ -1,0 +1,57 @@
+{% extends "recipes/base.html" %}
+{% load static %}
+{% load hitcount_tags %}
+
+{% block content %}
+<div class="main">
+  <div class="container">
+  <h2 class="trending-title">Trending Recipes</h2>
+  <div class="recipe-container">
+    {% for recipe in recipes %}
+    <div class="recipe-card-wrapper">
+      <a href="{% url 'recipes-detail' recipe.pk %}" class="stretched-link">
+        <div class="recipe-card">
+          <!-- Recipe Image with proper URL handling -->
+          <div class="recipe-img-container">
+            <div class="views"><img src="{% static 'eye.png' %}" alt="view icon" class="views-img">{{ recipe.hit_count.hits }}</div>
+            {% if recipe.image %}
+            <img src="{{ recipe.image.url }}" class="recipe-img" alt="{{ recipe.title }}">
+            {% else %}
+            <img src="{% static 'default-recipe.jpg' %}" class="recipe-img" alt="Default recipe image">
+            {% endif %}
+          </div>
+          <div class="recipe-text-container">
+            <h5 class="recipe-title">{{ recipe.title | upper }}</h5>
+            <div class="recipe-stats-container">
+              <div class="recipe-stat">
+                <h5>Time To Cook:</h5>
+                <p class="recipe-stat-value">{{ recipe.time_to_cook }} Mins</p>
+              </div>
+              <div class="recipe-stat">
+                <h5>Difficulty: </h5>
+                <p class="recipe-stat-value">{{ recipe.difficulty }}</p>
+              </div>
+              <div class="recipe-stat">
+                <h5>Rating: </h5>
+                <p class="recipe-stat-value">{{ recipe.average_rating|floatformat:1 }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="recipe-text-container">
+            By {{ recipe.author.username }} | {{ recipe.updated_at|date:"F d, Y" }}
+          </div>
+        </div>
+      </a>
+    </div>
+    
+    {% empty %}
+    <div class="col-12">
+      <div class="alert alert-info" role="alert">
+        No recipes found. Be the first to add one!
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+</div>
+{% endblock content %}
